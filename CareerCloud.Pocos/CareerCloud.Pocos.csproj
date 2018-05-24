@@ -44,6 +44,8 @@
     <Compile Include="ApplicantEducationPoco.cs" />
     <Compile Include="ApplicantJobApplicationPoco.cs" />
     <Compile Include="ApplicantProfilePoco.cs" />
+    <Compile Include="ApplicantResumePoco.cs" />
+    <Compile Include="ApplicantSkillPoco.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
