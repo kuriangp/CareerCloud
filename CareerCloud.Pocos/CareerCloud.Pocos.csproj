@@ -46,6 +46,13 @@
     <Compile Include="ApplicantProfilePoco.cs" />
     <Compile Include="ApplicantResumePoco.cs" />
     <Compile Include="ApplicantSkillPoco.cs" />
+    <Compile Include="ApplicantWorkHistoryPoco.cs" />
+    <Compile Include="CompanyDescriptionPoco.cs" />
+    <Compile Include="CompanyJobDescriptionPoco.cs" />
+    <Compile Include="CompanyJobEducationPoco.cs" />
+    <Compile Include="CompanyJobPoco.cs" />
+    <Compile Include="CompanyJobSkillPoco.cs" />
+    <Compile Include="CompanyLocationPoco.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
