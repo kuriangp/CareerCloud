@@ -13,10 +13,10 @@ namespace CareerCloud.Pocos
     {
         [Key]
         [Column ("LanguageID")]
-        public Guid LanguageId { get; set; }
+        public string LanguageID { get; set; }
         public string Name { get; set; }
         [Column ("Native_Name")]
-        public string Native_Name { get; set; }
+        public string NativeName { get; set; }
 
     }
 }

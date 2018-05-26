@@ -10,13 +10,11 @@ namespace CareerCloud.Pocos
 {
     [Table("Applicant_Educations")]
 
-    public class ApplicantEducationPoco
+    public class ApplicantEducationPoco : IPoco
     {
         [Key]
-        public Guid id { get; set; }
-
-        public Guid Applicant { get; set; }
-
+        public Guid Id { get; set; }
+        public Guid Applicant { get; set; }       
         public string Major { get; set; }
         [Column("Certificate_Diploma")]
         public string CertificateDiploma { get; set; }

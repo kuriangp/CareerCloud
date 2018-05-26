@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CareerCloud.Pocos
 {
     [Table("Company_Jobs")]
-    public class CompanyJobPoco
+    public class CompanyJobPoco : IPoco
     {
         [Key]
         public Guid Id { get; set; }
@@ -17,9 +17,9 @@ namespace CareerCloud.Pocos
         [Column ("Profile_Created")]
         public DateTime ProfileCreated { get; set; }
         [Column("Is_Inactive")]
-        public Boolean IsInactive { get; set; }
-        [Column("[Is_Company_Hidden]")]
-        public Boolean IsCompanyHidden { get; set; }
+        public bool IsInactive { get; set; }
+        [Column("Is_Company_Hidden")]
+        public bool IsCompanyHidden { get; set; }
         [Column("Time_Stamp")]
         public byte[] TimeStamp { get; set; }
     }

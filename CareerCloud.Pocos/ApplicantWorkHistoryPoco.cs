@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CareerCloud.Pocos
 {
     [Table("Applicant_Work_History")]
-    public class ApplicantWorkHistoryPoco
+    public class ApplicantWorkHistoryPoco : IPoco
     {
 
         [Key]
@@ -25,13 +25,13 @@ namespace CareerCloud.Pocos
         [Column("Job_Description")]
         public string JobDescription { get; set; }
         [Column("Start_Month")]
-        public Int16 StartMonth { get; set; }
+        public short StartMonth { get; set; }
         [Column("Start_Year")]
-        public Int32 StartYear { get; set; }
+        public int StartYear { get; set; }
         [Column("End_Month")]
-        public Int16 EndMonth { get; set; }
+        public short EndMonth { get; set; }
         [Column("End_Year")]
-        public Int32 EndYear { get; set; }
+        public int EndYear { get; set; }
         [Column("Time_Stamp")]
         public byte[] TimeStamp { get; set; }
 

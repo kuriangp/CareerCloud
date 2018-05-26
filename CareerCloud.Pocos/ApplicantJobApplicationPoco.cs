@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 namespace CareerCloud.Pocos
 {
     [Table("Applicant_Job_Applications")]
-    public class ApplicantJobApplicationPoco
+    public class ApplicantJobApplicationPoco : IPoco
     {
         [Key]
         public Guid Id { get; set; }
         public Guid Applicant { get; set; }
         public Guid Job { get; set; }
         [Column("Application_Date")]
-        public DateTime? ApplicationDate { get; set; }
+        public DateTime ApplicationDate { get; set; }
         [Column("Time_Stamp")]
-        public Byte[] TimeStamp { get; set; }
+        public byte[] TimeStamp { get; set; }
      
         
     }
