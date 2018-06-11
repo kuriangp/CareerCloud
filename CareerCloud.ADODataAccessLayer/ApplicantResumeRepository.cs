@@ -10,10 +10,9 @@ using System.Threading.Tasks;
 
 namespace CareerCloud.ADODataAccessLayer
 {
-    public class ApplicantResumeRepository : IDataRepository<ApplicantResumePoco>
+    public class ApplicantResumeRepository : BaseADO, IDataRepository<ApplicantResumePoco>
     {
-        private SqlConnection _connection;
-
+   
         public void Add(params ApplicantResumePoco[] items)
         {
             SqlCommand cmd = new SqlCommand();
