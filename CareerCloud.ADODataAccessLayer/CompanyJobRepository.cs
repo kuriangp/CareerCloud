@@ -13,25 +13,28 @@ namespace CareerCloud.ADODataAccessLayer
     {
         public void Add(params CompanyJobPoco[] items)
         {
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = _connection;
-
-            foreach (CompanyJobPoco poco in items)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
-                cmd.CommandText = @"INSERT INTO Company_Jobs
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = connection;
+
+                foreach (CompanyJobPoco poco in items)
+                {
+                    cmd.CommandText = @"INSERT INTO Company_Jobs
                     (Id,Company, Profile_Created, Is_Inactive, Is_Company_Hidden)
                     VALUES
-                    (@Id,@Applicant,@Major,@Certificate_Diploma,@Start_Date,@Completion_Date,@Completion_Percent)";
+                    (@Id, @Company, @Profile_Created, @Is_Inactive, @Is_Company_Hidden)";
 
-                cmd.Parameters.AddWithValue("@Id", poco.Id);
-                cmd.Parameters.AddWithValue("@Company", poco.Company);
-                cmd.Parameters.AddWithValue("@Profile_Created", poco.ProfileCreated);
-                cmd.Parameters.AddWithValue("@Is_Inactive", poco.IsInactive);
-                cmd.Parameters.AddWithValue("@Is_Company_Hidden", poco.IsCompanyHidden);
+                    cmd.Parameters.AddWithValue("@Id", poco.Id);
+                    cmd.Parameters.AddWithValue("@Company", poco.Company);
+                    cmd.Parameters.AddWithValue("@Profile_Created", poco.ProfileCreated);
+                    cmd.Parameters.AddWithValue("@Is_Inactive", poco.IsInactive);
+                    cmd.Parameters.AddWithValue("@Is_Company_Hidden", poco.IsCompanyHidden);
 
-                _connection.Open();
-                cmd.ExecuteNonQuery();
-                _connection.Close();
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                    connection.Close();
+                }
             }
         }
 
@@ -42,15 +45,15 @@ namespace CareerCloud.ADODataAccessLayer
 
         public IList<CompanyJobPoco> GetAll(params System.Linq.Expressions.Expression<Func<CompanyJobPoco, object>>[] navigationProperties)
         {
-            CompanyJobPoco[] pocos = new CompanyJobPoco[1000];
+            CompanyJobPoco[] pocos = new CompanyJobPoco[10000];
 
-            using (_connection)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = _connection;
+                cmd.Connection = connection;
                 cmd.CommandText = "SELECT * FROM Company_Jobs";
 
-                _connection.Open();
+                connection.Open();
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 int position = 0;
@@ -66,9 +69,10 @@ namespace CareerCloud.ADODataAccessLayer
                     pocos[position] = poco;
                     position++;
                 }
-                _connection.Close();
+                connection.Close();
             }
-            return pocos;
+            //return pocos;
+            return pocos.Where(p => p != null).ToList();
         }
 
         public IList<CompanyJobPoco> GetList(System.Linq.Expressions.Expression<Func<CompanyJobPoco, bool>> where, params System.Linq.Expressions.Expression<Func<CompanyJobPoco, object>>[] navigationProperties)
@@ -84,47 +88,46 @@ namespace CareerCloud.ADODataAccessLayer
 
         public void Remove(params CompanyJobPoco[] items)
         {
-            using (_connection)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = _connection;
+                cmd.Connection = connection;
                 foreach (CompanyJobPoco poco in items)
                 {
                     cmd.CommandText = @"DELETE FROM Company_Jobs 
                         WHERE ID = @Id";
                     cmd.Parameters.AddWithValue("@Id", poco.Id);
 
-                    _connection.Open();
+                    connection.Open();
                     cmd.ExecuteNonQuery();
-                    _connection.Close();
+                    connection.Close();
                 }
             }
         }
 
         public void Update(params CompanyJobPoco[] items)
         {
-            using (_connection)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = _connection;
+                cmd.Connection = connection;
                 foreach (CompanyJobPoco poco in items)
                 {
-                    cmd.CommandText = @"UPDATE Company_Jobs, 
+                    cmd.CommandText = @"UPDATE Company_Jobs 
                         SET Company = @Company,
                             Profile_Created = @Profile_Created,
                             Is_Inactive =@Is_Inactive,
-                            Is_Company_Hidden=@Is_Company_Hidden,
+                            Is_Company_Hidden=@Is_Company_Hidden
                         WHERE ID = @Id";
                     cmd.Parameters.AddWithValue("@Id", poco.Id);
                     cmd.Parameters.AddWithValue("@Company", poco.Company);
                     cmd.Parameters.AddWithValue("@Profile_Created", poco.ProfileCreated);
                     cmd.Parameters.AddWithValue("@Is_Inactive", poco.IsInactive);
                     cmd.Parameters.AddWithValue("@Is_Company_Hidden", poco.IsCompanyHidden);
-                    cmd.Parameters.AddWithValue("@Id", poco.Id);
 
-                    _connection.Open();
+                    connection.Open();
                     cmd.ExecuteNonQuery();
-                    _connection.Close();
+                    connection.Close();
                 }
             }
         }

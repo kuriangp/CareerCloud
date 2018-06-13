@@ -11,34 +11,36 @@ namespace CareerCloud.ADODataAccessLayer
 {
     public class ApplicantSkillRepository : BaseADO, IDataRepository<ApplicantSkillPoco>
     {
-        
+
         public void Add(params ApplicantSkillPoco[] items)
         {
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = _connection;
-
-            foreach (ApplicantSkillPoco poco in items)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
-                cmd.CommandText = @"INSERT INTO Applicant_Skills 
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = connection;
+
+                foreach (ApplicantSkillPoco poco in items)
+                {
+                    cmd.CommandText = @"INSERT INTO Applicant_Skills 
                     (Id, Applicant, Skill, Skill_Level, Start_Month, Start_Year, End_Month, End_Year)
                     VALUES
                     (@Id, @Applicant, @Skill, @Skill_Level, @Start_Month, @Start_Year, @End_Month, @End_Year)";
 
-                cmd.Parameters.AddWithValue("@Id", poco.Id);
-                cmd.Parameters.AddWithValue("@Applicant", poco.Applicant);
-                cmd.Parameters.AddWithValue("@Skill", poco.Skill);
-                cmd.Parameters.AddWithValue("@Skill_Level", poco.SkillLevel );
-                cmd.Parameters.AddWithValue("@Start_Month", poco.StartMonth);
-                cmd.Parameters.AddWithValue("@Start_Year", poco.StartYear);
-                cmd.Parameters.AddWithValue("@End_Month", poco.EndMonth );
-                cmd.Parameters.AddWithValue("@End_Year", poco.EndYear);
+                    cmd.Parameters.AddWithValue("@Id", poco.Id);
+                    cmd.Parameters.AddWithValue("@Applicant", poco.Applicant);
+                    cmd.Parameters.AddWithValue("@Skill", poco.Skill);
+                    cmd.Parameters.AddWithValue("@Skill_Level", poco.SkillLevel);
+                    cmd.Parameters.AddWithValue("@Start_Month", poco.StartMonth);
+                    cmd.Parameters.AddWithValue("@Start_Year", poco.StartYear);
+                    cmd.Parameters.AddWithValue("@End_Month", poco.EndMonth);
+                    cmd.Parameters.AddWithValue("@End_Year", poco.EndYear);
 
-                _connection.Open();
-                cmd.ExecuteNonQuery();
-                _connection.Close();
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                    connection.Close();
+                }
             }
         }
-
         public void CallStoredProc(string name, params Tuple<string, string>[] parameters)
         {
             throw new NotImplementedException();
@@ -48,13 +50,13 @@ namespace CareerCloud.ADODataAccessLayer
         {
             ApplicantSkillPoco[] pocos = new ApplicantSkillPoco[1000];
 
-            using (_connection)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = _connection;
+                cmd.Connection = connection;
                 cmd.CommandText = "SELECT * FROM Applicant_Skills";
 
-                _connection.Open();
+                connection.Open();
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 int position = 0;
@@ -73,9 +75,10 @@ namespace CareerCloud.ADODataAccessLayer
                     pocos[position] = poco;
                     position++;
                 }
-                _connection.Close();
+                connection.Close();
             }
-            return pocos;
+            //return pocos;
+            return pocos.Where(p => p != null).ToList();
         }
 
         public IList<ApplicantSkillPoco> GetList(System.Linq.Expressions.Expression<Func<ApplicantSkillPoco, bool>> where, params System.Linq.Expressions.Expression<Func<ApplicantSkillPoco, object>>[] navigationProperties)
@@ -91,39 +94,39 @@ namespace CareerCloud.ADODataAccessLayer
 
         public void Remove(params ApplicantSkillPoco[] items)
         {
-            using (_connection)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = _connection;
+                cmd.Connection = connection;
                 foreach (ApplicantSkillPoco poco in items)
                 {
                     cmd.CommandText = @"DELETE FROM Applicant_Skills 
                         WHERE ID = @Id";
                     cmd.Parameters.AddWithValue("@Id", poco.Id);
 
-                    _connection.Open();
+                    connection.Open();
                     cmd.ExecuteNonQuery();
-                    _connection.Close();
+                    connection.Close();
                 }
             }
         }
 
         public void Update(params ApplicantSkillPoco[] items)
         {
-            using (_connection)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = _connection;
+                cmd.Connection = connection;
                 foreach (ApplicantSkillPoco poco in items)
                 {
-                    cmd.CommandText = @"UPDATE Applicant_Skills, 
+                    cmd.CommandText = @"UPDATE Applicant_Skills 
                         SET Applicant = @Applicant,
                             Skill = @Skill,
                             Skill_Level =@Skill_Level,
                             Start_Month =@Start_Month,
                             Start_Year =@Start_Year,
                             End_Month =@End_Month,
-                            End_Year =@End_Year,
+                            End_Year =@End_Year
                         WHERE ID = @Id";
                     cmd.Parameters.AddWithValue("@Id", poco.Id);
                     cmd.Parameters.AddWithValue("@Applicant", poco.Applicant);
@@ -131,13 +134,12 @@ namespace CareerCloud.ADODataAccessLayer
                     cmd.Parameters.AddWithValue("@Skill_Level", poco.SkillLevel);
                     cmd.Parameters.AddWithValue("@Start_Month", poco.StartMonth);
                     cmd.Parameters.AddWithValue("@Start_Year", poco.StartYear);
-                    cmd.Parameters.AddWithValue("@End_Month", poco.StartMonth);
+                    cmd.Parameters.AddWithValue("@End_Month", poco.EndMonth);
                     cmd.Parameters.AddWithValue("@End_Year", poco.StartYear);
-                    cmd.Parameters.AddWithValue("@Id", poco.Id);
 
-                    _connection.Open();
+                    connection.Open();
                     cmd.ExecuteNonQuery();
-                    _connection.Close();
+                    connection.Close();
                 }
             }
         }

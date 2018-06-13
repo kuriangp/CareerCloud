@@ -14,24 +14,27 @@ namespace CareerCloud.ADODataAccessLayer
 
         public void Add(params CompanyDescriptionPoco[] items)
         {
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = _connection;
-
-            foreach (CompanyDescriptionPoco poco in items)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
-                cmd.CommandText = @"INSERT INTO Company_Descriptions  
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = connection;
+
+                foreach (CompanyDescriptionPoco poco in items)
+                {
+                    cmd.CommandText = @"INSERT INTO Company_Descriptions  
                     (Id,Company, LanguageID, Company_Name, Company_Description)
                     VALUES
                     (@Id, @Company, @LanguageID, @Company_Name, @Company_Description)";
 
-                cmd.Parameters.AddWithValue("@Id", poco.Id);
-                cmd.Parameters.AddWithValue("@Company", poco.Company);
-                cmd.Parameters.AddWithValue("@LanguageID", poco.LanguageId);
-                cmd.Parameters.AddWithValue("@Company_Name", poco.CompanyName);
-                cmd.Parameters.AddWithValue("@Company_Description", poco.CompanyDescription);
-                _connection.Open();
-                cmd.ExecuteNonQuery();
-                _connection.Close();
+                    cmd.Parameters.AddWithValue("@Id", poco.Id);
+                    cmd.Parameters.AddWithValue("@Company", poco.Company);
+                    cmd.Parameters.AddWithValue("@LanguageID", poco.LanguageId);
+                    cmd.Parameters.AddWithValue("@Company_Name", poco.CompanyName);
+                    cmd.Parameters.AddWithValue("@Company_Description", poco.CompanyDescription);
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                    connection.Close();
+                }
             }
         }
 
@@ -44,13 +47,13 @@ namespace CareerCloud.ADODataAccessLayer
         {
             CompanyDescriptionPoco[] pocos = new CompanyDescriptionPoco[1000];
 
-            using (_connection)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = _connection;
+                cmd.Connection = connection;
                 cmd.CommandText = "SELECT * FROM Company_Descriptions";
 
-                _connection.Open();
+                connection.Open();
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 int position = 0;
@@ -66,9 +69,10 @@ namespace CareerCloud.ADODataAccessLayer
                     pocos[position] = poco;
                     position++;
                 }
-                _connection.Close();
+                connection.Close();
             }
-            return pocos;
+            // return pocos;
+            return pocos.Where(p => p != null).ToList();
         }
 
         public IList<CompanyDescriptionPoco> GetList(System.Linq.Expressions.Expression<Func<CompanyDescriptionPoco, bool>> where, params System.Linq.Expressions.Expression<Func<CompanyDescriptionPoco, object>>[] navigationProperties)
@@ -84,46 +88,46 @@ namespace CareerCloud.ADODataAccessLayer
 
         public void Remove(params CompanyDescriptionPoco[] items)
         {
-            using (_connection)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = _connection;
+                cmd.Connection = connection;
                 foreach (CompanyDescriptionPoco poco in items)
                 {
                     cmd.CommandText = @"DELETE FROM Company_Descriptions 
                         WHERE ID = @Id";
                     cmd.Parameters.AddWithValue("@Id", poco.Id);
 
-                    _connection.Open();
+                    connection.Open();
                     cmd.ExecuteNonQuery();
-                    _connection.Close();
+                    connection.Close();
                 }
             }
         }
 
         public void Update(params CompanyDescriptionPoco[] items)
         {
-            using (_connection)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = _connection;
+                cmd.Connection = connection;
                 foreach (CompanyDescriptionPoco poco in items)
                 {
-                    cmd.CommandText = @"UPDATE Company_Descriptions, 
-                        SET Company = @Applicant,
-                            LanguageID = @ LanguageID,
+                    cmd.CommandText = @"UPDATE Company_Descriptions 
+                        SET Company = @Company,
+                            LanguageID = @LanguageID,
                             Company_Name =@Company_Name,
-                            Company_Description =@Company_Description,
+                            Company_Description =@Company_Description
                         WHERE ID = @Id";
                     cmd.Parameters.AddWithValue("@Id", poco.Id);
                     cmd.Parameters.AddWithValue("@Company", poco.Company);
                     cmd.Parameters.AddWithValue("@LanguageID", poco.LanguageId);
                     cmd.Parameters.AddWithValue("@Company_Name", poco.CompanyName);
                     cmd.Parameters.AddWithValue("@Company_Description", poco.CompanyDescription);
-                    cmd.Parameters.AddWithValue("@Id", poco.Id);
-                    _connection.Open();
+                  
+                    connection.Open();
                     cmd.ExecuteNonQuery();
-                    _connection.Close();
+                    connection.Close();
                 }
             }
         }

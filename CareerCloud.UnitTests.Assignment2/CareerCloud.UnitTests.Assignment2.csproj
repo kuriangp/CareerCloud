@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CareerCloud.UnitTests.Assignment2</RootNamespace>
     <AssemblyName>CareerCloud.UnitTests.Assignment2</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">15.0</VisualStudioVersion>
@@ -19,6 +19,7 @@
     <TestProjectType>UnitTest</TestProjectType>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -60,22 +61,24 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CareerCloud.ADODataAccessLayer\CareerCloud.ADODataAccessLayer.csproj">
-      <Project>{284facfa-966e-4016-8a39-a92c0637b3d2}</Project>
+    <ProjectReference Include="..\CareerCloud.ADODataAccessLayer\CareerCloud.ADODataAccessLayer.csproj">
+      <Project>{63dbdb3a-2ff6-4a48-b9ac-190b2480fece}</Project>
       <Name>CareerCloud.ADODataAccessLayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\CareerCloud.DataAccessLayer\CareerCloud.DataAccessLayer.csproj">
-      <Project>{95844af3-bc02-4e5f-860e-96b18e541c21}</Project>
+    <ProjectReference Include="..\CareerCloud.DataAccessLayer\CareerCloud.DataAccessLayer.csproj">
+      <Project>{ae93c313-ed6f-40f3-bce2-68494623f227}</Project>
       <Name>CareerCloud.DataAccessLayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\CareerCloud.Pocos\CareerCloud.Pocos.csproj">
-      <Project>{facb9a11-546f-4a1e-b20b-df66a299f246}</Project>
+    <ProjectReference Include="..\CareerCloud.Pocos\CareerCloud.Pocos.csproj">
+      <Project>{18fb0e7e-8952-4911-b946-e67130cf841d}</Project>
       <Name>CareerCloud.Pocos</Name>
     </ProjectReference>
   </ItemGroup>

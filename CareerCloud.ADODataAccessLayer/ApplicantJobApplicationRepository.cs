@@ -14,23 +14,26 @@ namespace CareerCloud.ADODataAccessLayer
     {
         public void Add(params ApplicantJobApplicationPoco[] items)
         {
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = _connection;
-
-            foreach (ApplicantJobApplicationPoco poco in items)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
-                cmd.CommandText = @"INSERT INTO Applicant_Job_Applications
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = connection;
+
+                foreach (ApplicantJobApplicationPoco poco in items)
+                {
+                    cmd.CommandText = @"INSERT INTO Applicant_Job_Applications
                     (Id, Applicant, Job, Application_Date)
                     VALUES
                     (@Id, @Applicant,@Job,@Application_Date)";
 
-                cmd.Parameters.AddWithValue("@Id", poco.Id);
-                cmd.Parameters.AddWithValue("@Applicant", poco.Applicant);
-                cmd.Parameters.AddWithValue("@Job", poco.Job);
-                cmd.Parameters.AddWithValue("@Application_Date", poco.ApplicationDate);
-                _connection.Open();
-                cmd.ExecuteNonQuery();
-                _connection.Close();
+                    cmd.Parameters.AddWithValue("@Id", poco.Id);
+                    cmd.Parameters.AddWithValue("@Applicant", poco.Applicant);
+                    cmd.Parameters.AddWithValue("@Job", poco.Job);
+                    cmd.Parameters.AddWithValue("@Application_Date", poco.ApplicationDate);
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                    connection.Close();
+                }
             }
         }
 
@@ -43,13 +46,13 @@ namespace CareerCloud.ADODataAccessLayer
         {
             ApplicantJobApplicationPoco[] pocos = new ApplicantJobApplicationPoco[1000];
 
-            using (_connection)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = _connection;
+                cmd.Connection = connection;
                 cmd.CommandText = "SELECT * FROM Applicant_Job_Applications";
 
-                _connection.Open();
+                connection.Open();
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 int position = 0;
@@ -65,10 +68,11 @@ namespace CareerCloud.ADODataAccessLayer
                     position++;
                 }
 
-                _connection.Close();
+                connection.Close();
                
             }
-            return pocos;
+            // return pocos;
+            return pocos.Where(p => p != null).ToList();
         }
         public IList<ApplicantJobApplicationPoco> GetList(System.Linq.Expressions.Expression<Func<ApplicantJobApplicationPoco, bool>> where, params System.Linq.Expressions.Expression<Func<ApplicantJobApplicationPoco, object>>[] navigationProperties)
         {
@@ -83,67 +87,47 @@ namespace CareerCloud.ADODataAccessLayer
 
         public void Remove(params ApplicantJobApplicationPoco[] items)
         {
-                using (_connection)
-                {
-                    SqlCommand cmd = new SqlCommand();
-                    cmd.Connection = _connection;
+            using (SqlConnection connection = new SqlConnection(_connString))
+            {
+                SqlCommand cmd = new SqlCommand();
+                    cmd.Connection = connection;
                     foreach (ApplicantJobApplicationPoco poco in items)
                     {
                         cmd.CommandText = @"DELETE FROM Applicant_Job_Applications 
                         WHERE ID = @Id";
                         cmd.Parameters.AddWithValue("@Id", poco.Id);
 
-                        _connection.Open();
+                        connection.Open();
                         cmd.ExecuteNonQuery();
-                        _connection.Close();
+                        connection.Close();
                     }
                 }
             }
 
         public void Update(params ApplicantJobApplicationPoco[] items)
         {
-                using (_connection)
+            using (SqlConnection connection = new SqlConnection(_connString))
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = connection;
+                foreach (ApplicantJobApplicationPoco poco in items)
                 {
-                    SqlCommand cmd = new SqlCommand();
-                    cmd.Connection = _connection;
-                    foreach (ApplicantJobApplicationPoco poco in items)
-                    {
-                        cmd.CommandText = @"UPDATE Applicant_Job_Applications, 
+                    cmd.CommandText = @"UPDATE Applicant_Job_Applications 
                         SET Applicant = @Applicant,
                         Job = @Job,
-                        Application_Date=@Application_Date,
-                        WHERE ID = @[Id]";
-                        cmd.Parameters.AddWithValue("@Id", poco.Id);
-                        cmd.Parameters.AddWithValue("@Applicant", poco.Applicant);
-                        cmd.Parameters.AddWithValue("@Job", poco.Job);
-                        cmd.Parameters.AddWithValue("@Application_Date", poco.ApplicationDate);
-                        cmd.Parameters.AddWithValue("@Id", poco.Id);
-
-                        _connection.Open();
-                        cmd.ExecuteNonQuery();
-                        _connection.Close();
-                    }
+                        Application_Date=@Application_Date
+                        WHERE ID = @Id";
+                    cmd.Parameters.AddWithValue("@Id", poco.Id);
+                    cmd.Parameters.AddWithValue("@Applicant", poco.Applicant);
+                    cmd.Parameters.AddWithValue("@Job", poco.Job);
+                    cmd.Parameters.AddWithValue("@Application_Date", poco.ApplicationDate);
+                    
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                    connection.Close();
                 }
+            }
+        }
+                
     }
 }
-
-        public IList<ApplicantJobApplicationPoco> GetList(Expression<Func<ApplicantJobApplicationPoco, bool>> where, params Expression<Func<ApplicantJobApplicationPoco, object>>[] navigationProperties)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ApplicantJobApplicationPoco GetSingle(Expression<Func<ApplicantJobApplicationPoco, bool>> where, params Expression<Func<ApplicantJobApplicationPoco, object>>[] navigationProperties)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Remove(params ApplicantJobApplicationPoco[] items)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Update(params ApplicantJobApplicationPoco[] items)
-        {
-            throw new NotImplementedException();
-        }
-    }

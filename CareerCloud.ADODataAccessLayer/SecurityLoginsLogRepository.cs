@@ -14,24 +14,27 @@ namespace CareerCloud.ADODataAccessLayer
     {
         public void Add(params SecurityLoginsLogPoco[] items)
         {
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = _connection;
-
-            foreach (SecurityLoginsLogPoco poco in items)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
-                cmd.CommandText = @"INSERT INTO Security_Logins_Log 
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = connection;
+
+                foreach (SecurityLoginsLogPoco poco in items)
+                {
+                    cmd.CommandText = @"INSERT INTO Security_Logins_Log 
                     (Id, Login, Source_IP, Logon_Date, Is_Succesful)
                     VALUES
                     (@Id, @Login, @Source_IP, @Logon_Date, @Is_Succesful)";
-                cmd.Parameters.AddWithValue("@Id", poco.Id);
-                cmd.Parameters.AddWithValue("@Login", poco.Login);
-                cmd.Parameters.AddWithValue("@Source_IP", poco.SourceIP);
-                cmd.Parameters.AddWithValue("@Logon_Date", poco.LogonDate);
-                cmd.Parameters.AddWithValue("@Is_Succesful", poco.IsSuccesful);
-   
-                _connection.Open();
-                cmd.ExecuteNonQuery();
-                _connection.Close();
+                    cmd.Parameters.AddWithValue("@Id", poco.Id);
+                    cmd.Parameters.AddWithValue("@Login", poco.Login);
+                    cmd.Parameters.AddWithValue("@Source_IP", poco.SourceIP);
+                    cmd.Parameters.AddWithValue("@Logon_Date", poco.LogonDate);
+                    cmd.Parameters.AddWithValue("@Is_Succesful", poco.IsSuccesful);
+
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                    connection.Close();
+                }
             }
         }
 
@@ -42,15 +45,15 @@ namespace CareerCloud.ADODataAccessLayer
 
         public IList<SecurityLoginsLogPoco> GetAll(params Expression<Func<SecurityLoginsLogPoco, object>>[] navigationProperties)
         {
-            SecurityLoginsLogPoco[] pocos = new SecurityLoginsLogPoco[1000];
+            SecurityLoginsLogPoco[] pocos = new SecurityLoginsLogPoco[10000];
 
-            using (_connection)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = _connection;
+                cmd.Connection = connection;
                 cmd.CommandText = "SELECT * FROM Security_Logins_Log";
 
-                _connection.Open();
+                connection.Open();
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 int position = 0;
@@ -65,9 +68,10 @@ namespace CareerCloud.ADODataAccessLayer
                     pocos[position] = poco;
                     position++;
                 }
-                _connection.Close();
+                connection.Close();
             }
-            return pocos;
+            //return pocos;
+            return pocos.Where(p => p != null).ToList();
         }
 
         public IList<SecurityLoginsLogPoco> GetList(Expression<Func<SecurityLoginsLogPoco, bool>> where, params Expression<Func<SecurityLoginsLogPoco, object>>[] navigationProperties)
@@ -83,48 +87,47 @@ namespace CareerCloud.ADODataAccessLayer
 
         public void Remove(params SecurityLoginsLogPoco[] items)
         {
-            using (_connection)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = _connection;
+                cmd.Connection = connection;
                 foreach (SecurityLoginsLogPoco poco in items)
                 {
                     cmd.CommandText = @"DELETE FROM Security_Logins_Log 
                         WHERE ID = @Id";
                     cmd.Parameters.AddWithValue("@Id", poco.Id);
 
-                    _connection.Open();
+                    connection.Open();
                     cmd.ExecuteNonQuery();
-                    _connection.Close();
+                    connection.Close();
                 }
             }
         }
 
         public void Update(params SecurityLoginsLogPoco[] items)
         {
-            using (_connection)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = _connection;
+                cmd.Connection = connection;
                 foreach (SecurityLoginsLogPoco poco in items)
                 {
                     //Login, Source_IP, Logon_Date, Is_Succesful
-                    cmd.CommandText = @"UPDATE Security_Logins_Log, 
+                    cmd.CommandText = @"UPDATE Security_Logins_Log 
                         SET Login = @Login,
                             Source_IP = @Source_IP,
                             Logon_Date=@Logon_Date,
-                            Is_Succesful=@Is_Succesful,
+                            Is_Succesful=@Is_Succesful
                         WHERE ID = @Id";
                     cmd.Parameters.AddWithValue("@Id", poco.Id);
                     cmd.Parameters.AddWithValue("@Login", poco.Login);
                     cmd.Parameters.AddWithValue("@Source_IP", poco.SourceIP);
                     cmd.Parameters.AddWithValue("@Logon_Date", poco.LogonDate);
                     cmd.Parameters.AddWithValue("@Is_Succesful", poco.IsSuccesful);
-                    cmd.Parameters.AddWithValue("@Id", poco.Id);
 
-                    _connection.Open();
+                    connection.Open();
                     cmd.ExecuteNonQuery();
-                    _connection.Close();
+                    connection.Close();
                 }
             }
         }

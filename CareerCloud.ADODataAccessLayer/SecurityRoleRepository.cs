@@ -13,22 +13,25 @@ namespace CareerCloud.ADODataAccessLayer
     {
         public void Add(params SecurityRolePoco[] items)
         {
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = _connection;
-
-            foreach (SecurityRolePoco poco in items)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
-                cmd.CommandText = @"INSERT INTO Security_Roles 
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = connection;
+
+                foreach (SecurityRolePoco poco in items)
+                {
+                    cmd.CommandText = @"INSERT INTO Security_Roles 
                     (Id, Role, Is_Inactive)
                     VALUES
                     (@Id, @Role, @Is_Inactive)";
-                cmd.Parameters.AddWithValue("@Id", poco.Id);
-                cmd.Parameters.AddWithValue("@Role", poco.Role);
-                cmd.Parameters.AddWithValue("@Is_Inactive", poco.IsInactive);
-                
-                _connection.Open();
-                cmd.ExecuteNonQuery();
-                _connection.Close();
+                    cmd.Parameters.AddWithValue("@Id", poco.Id);
+                    cmd.Parameters.AddWithValue("@Role", poco.Role);
+                    cmd.Parameters.AddWithValue("@Is_Inactive", poco.IsInactive);
+
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                    connection.Close();
+                }
             }
         }
 
@@ -41,13 +44,13 @@ namespace CareerCloud.ADODataAccessLayer
         {
             SecurityRolePoco[] pocos = new SecurityRolePoco[1000];
 
-            using (_connection)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = _connection;
+                cmd.Connection = connection;
                 cmd.CommandText = "SELECT * FROM Security_Roles";
 
-                _connection.Open();
+                connection.Open();
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 int position = 0;
@@ -60,9 +63,10 @@ namespace CareerCloud.ADODataAccessLayer
                     pocos[position] = poco;
                     position++;
                 }
-                _connection.Close();
+                connection.Close();
             }
-            return pocos;
+            //return pocos;
+            return pocos.Where(p => p != null).ToList();
         }
 
         public IList<SecurityRolePoco> GetList(System.Linq.Expressions.Expression<Func<SecurityRolePoco, bool>> where, params System.Linq.Expressions.Expression<Func<SecurityRolePoco, object>>[] navigationProperties)
@@ -78,43 +82,42 @@ namespace CareerCloud.ADODataAccessLayer
 
         public void Remove(params SecurityRolePoco[] items)
         {
-            using (_connection)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = _connection;
+                cmd.Connection = connection;
                 foreach (SecurityRolePoco poco in items)
                 {
                     cmd.CommandText = @"DELETE FROM Security_Roles 
                         WHERE ID = @Id";
                     cmd.Parameters.AddWithValue("@Id", poco.Id);
 
-                    _connection.Open();
+                    connection.Open();
                     cmd.ExecuteNonQuery();
-                    _connection.Close();
+                    connection.Close();
                 }
             }
         }
 
         public void Update(params SecurityRolePoco[] items)
         {
-            using (_connection)
+            using (SqlConnection connection = new SqlConnection(_connString))
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.Connection = _connection;
+                cmd.Connection = connection;
                 foreach (SecurityRolePoco poco in items)
                 {
-                    cmd.CommandText = @"UPDATE Security_Roles, 
+                    cmd.CommandText = @"UPDATE Security_Roles 
                         SET Role = @Role,
-                            Is_Inactive = @Is_Inactive,
+                            Is_Inactive = @Is_Inactive
                         WHERE ID = @Id";
                     cmd.Parameters.AddWithValue("@Id", poco.Id);
                     cmd.Parameters.AddWithValue("@Role", poco.Role);
                     cmd.Parameters.AddWithValue("@Is_Inactive", poco.IsInactive);
-                    cmd.Parameters.AddWithValue("@Id", poco.Id);
 
-                    _connection.Open();
+                    connection.Open();
                     cmd.ExecuteNonQuery();
-                    _connection.Close();
+                    connection.Close();
                 }
             }
         }
