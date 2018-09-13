@@ -39,6 +39,10 @@ namespace CareerCloud.BusinessLogicLayer
             _repository.Remove(pocos);
         }
 
+        public SystemCountryCodePoco Get(string code)
+        {
+            return _repository.GetSingle(c => c.Code == code);
+        }
 
         protected void Verify(SystemCountryCodePoco[] pocos)
         {

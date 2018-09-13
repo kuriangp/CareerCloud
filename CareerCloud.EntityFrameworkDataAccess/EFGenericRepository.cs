@@ -13,9 +13,9 @@ namespace CareerCloud.EntityFrameworkDataAccess
     {
         private CareerCloudContext _context;
 
-        public EFGenericRepository()
+        public EFGenericRepository(bool createProxy = true)
         {
-            _context = new CareerCloudContext();
+            _context = new CareerCloudContext(createProxy);
         }   
 
 
@@ -60,13 +60,12 @@ namespace CareerCloud.EntityFrameworkDataAccess
         public T GetSingle(Expression<Func<T, bool>> where, params Expression<Func<T, object>>[] navigationProperties)
         {
             IQueryable<T> dbQuery = _context.Set<T>();
-
             foreach (Expression<Func<T, object>> navProp in navigationProperties)
             {
-                dbQuery = dbQuery.Include<T, Object>(navProp);
+                dbQuery = dbQuery.Include<T, object>(navProp);
             }
-            return dbQuery.FirstOrDefault(where);
-           // return dbQuery.Where(where).FirstOrDefault();
+
+            return dbQuery.Where(where).FirstOrDefault();
         }
 
         public void Remove(params T[] items)

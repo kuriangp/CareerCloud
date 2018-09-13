@@ -38,7 +38,10 @@ namespace CareerCloud.BusinessLogicLayer
             _repository.Remove(pocos);
         }
 
-
+        public SystemLanguageCodePoco Get(string id)
+        {
+            return _repository.GetSingle(c => c.LanguageID == id);
+        }
 
         protected  void Verify(SystemLanguageCodePoco[] pocos)
         {
